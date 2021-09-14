@@ -30,7 +30,7 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      - run: yarn build
+      - run: REACT_APP_TITLE='preview' yarn build 
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:

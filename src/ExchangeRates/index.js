@@ -8,13 +8,16 @@ const ExchangeRates = () => {
   if (error) return <p>Error :(</p>;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)" }}>
-      {data.rates.map(({ currency, rate }) => (
-        <div key={currency}>
-          {currency}: {rate}
-        </div>
-      ))}
-    </div>
+    <>
+      <h1>Child: {process.env.REACT_APP_TITLE}</h1>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)" }}>
+        {data.rates.map(({ currency, rate }) => (
+          <div key={currency}>
+            {currency}: {rate}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

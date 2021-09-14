@@ -25,9 +25,7 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      - run: yarn test
-
-      - run: yarn build
+      - run: REACT_APP_TITLE='production' yarn build 
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
