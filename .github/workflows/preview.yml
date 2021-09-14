@@ -30,7 +30,7 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      - run: REACT_APP_TITLE='preview' yarn build 
+      - run: REACT_APP_URL='http://mfe-child-preview.s3-website.eu-central-1.amazonaws.com/' REACT_APP_TITLE='preview' yarn build 
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
