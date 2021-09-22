@@ -15,3 +15,7 @@ const reactLifecycles = singleSpaReact({
 });
 
 export const { bootstrap, mount, unmount } = reactLifecycles;
+
+// shared data
+export const CHILD_PROP = "prop from child";
+export { default as ComponentFromChild } from "./ComponentFromChild";

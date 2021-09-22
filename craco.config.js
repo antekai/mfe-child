@@ -26,4 +26,5 @@ const getPlugins = () => {
 
 module.exports = {
   plugins: getPlugins(),
+  externals: ["@ante/sispa-mfe-child"],
 };
