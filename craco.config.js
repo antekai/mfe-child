@@ -1,100 +1,29 @@
-const { whenProd } = require("@craco/craco");
+const singleSpaApplicationPlugin = require("craco-plugin-single-spa-application");
 
-const TerserPlugin = require("terser-webpack-plugin");
+const singleSpaPlugin = {
+  plugin: singleSpaApplicationPlugin,
+  options: {
+    orgName: "ante",
+    projectName: "sispa-mfe-child",
+    entry: "src/single-spa-index.js", //defaults to src/index.js,
+    orgPackagesAsExternal: false, // defaults to false. marks packages that has @my-org prefix as external so they are not included in the bundle
+    reactPackagesAsExternal: true, // defaults to true. marks react and react-dom as external so they are not included in the bundle
+    // externals: ["react-router", "react-router-dom"], // defaults to []. marks the specified modules as external so they are not included in the bundle
+    minimize: false, // defaults to false, sets optimization.minimize value
+  },
+};
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const getPlugins = () => {
+  let plugins = [];
 
-module.exports = function ({ env }) {
-  return {
-    plugins: [],
-    webpack: {
-      plugins: [
-        new MiniCssExtractPlugin({
-          filename: "[name].css",
-          ignoreOrder: false, // Enable to remove warnings about conflicting order
-        }),
-      ],
-      module: {
-        rules: [
-          {
-            test: /\.css$/,
-            use: [
-              {
-                loader: MiniCssExtractPlugin.loader,
-                options: {
-                  // only enable hot in development
-                  hmr: process.env.NODE_ENV === "development",
-                  // if hmr does not work, this is a forceful method.
-                  reloadAll: true,
-                },
-              },
-              "css-loader",
-            ],
-          },
-        ],
-      },
-      configure: (webpackConfig, { env, paths }) => {
-        return {
-          ...webpackConfig,
-          entry: {
-            main: "./src/index.js",
-            child: "./src/ara/index.js",
-          },
-          output: {
-            filename: "[name].bundle.js",
-          },
-          plugins: [
-            ...webpackConfig.plugins,
-            new HtmlWebpackPlugin({
-              excludeChunks: ["child"],
-              template: "./public/index.html",
-            }),
-          ],
-          ...whenProd(
-            () => ({
-              mode: "production",
-              devtool: "hidden-source-map",
-              output: {
-                ...webpackConfig.output,
-                publicPath: `${process.env.REACT_APP_URL}`,
-                filename: "[name].bundle.js",
-                futureEmitAssets: false,
-              },
-              optimization: {
-                ...webpackConfig.optimization,
-                minimizer: [
-                  new TerserPlugin({
-                    cache: true,
-                    parallel: true,
-                    sourceMap: true, // Must be set to true if using source-maps in production
-                    terserOptions: {
-                      // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-                    },
-                  }),
-                ],
-                runtimeChunk: false,
-                splitChunks: {
-                  cacheGroups: {
-                    default: false,
-                  },
-                },
-              },
-            }),
-            {}
-          ),
-        };
-      },
-    },
+  if (process.env.REACT_APP_MODE !== "standalone") {
+    // standalone mode is used only for development script: yarn start:standalone
+    plugins.push(singleSpaPlugin);
+  }
 
-    jest: {
-      configure: (jestConfig, { env, paths, resolve, rootDir }) => {
-        return {
-          ...jestConfig,
-          setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-          setupFiles: [...jestConfig.setupFiles],
-        };
-      },
-    },
-  };
+  return plugins;
+};
+
+module.exports = {
+  plugins: getPlugins(),
 };
